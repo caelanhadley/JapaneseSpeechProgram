@@ -413,7 +413,16 @@ class Ui_MainWindow(object):
             self.setViewerImage(lc.getImage(self.identity))
 
     def hintPressed(self):
+        answer = "WOOW" ###### DELETE CODE, FOR TESTING PURPOSES ######
         self.setInteractionsText("Hint!")
+        self.end_time = timeit.default_timer()
+        self.countActive = False
+        self.count_thread.join()
+        self.setInteractionsText(
+            f'Correct! You said \"{answer}\" in {round(self.deltaTime(), 1)}')
+        self.newAudioThread('buzzer.wav')
+        self.removeViewerImage()
+        self.addScore(self.scoreCalculation(self.deltaTime()))
 
     def challengePressed(self):
         self.setInteractionsText("Challange!")
