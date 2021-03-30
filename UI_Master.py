@@ -270,6 +270,14 @@ class Ui_MainWindow(object):
         self.button_answer.clicked.connect(self.answerPressed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    ## Load Methods ##
+
+    def loadSplash(self):
+        try:
+            self.setViewerImage('splash.png')
+        except:
+            print("Error: Loading Splash Image!")
+
     ### GET METHODS ###
 
     # Will return String of Scoring Difficulty #
@@ -544,5 +552,6 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    ui.loadSplash()
     MainWindow.show()
     sys.exit(onExit(app, ui))

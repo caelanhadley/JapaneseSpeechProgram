@@ -2,7 +2,8 @@ import pyaudio
 import wave
 
 # Constants #
-SOUND_FILE_DIR = "audio_src\\" # Root audio file directory
+SOUND_FILE_DIR = "audio_src/" # Root audio file directory
+
 
 # Instance #
 chunk = 1024
