@@ -1,7 +1,6 @@
 # JapaneseSpeechProgram
 JSP Build Repository
 
-Credits:
+Updates Coming!
 
-Google - SpeechRecognition;
-PyQt5 - GUI;
+Importing Files...
