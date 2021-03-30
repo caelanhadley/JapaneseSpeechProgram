@@ -3,5 +3,5 @@ JSP Build Repository
 
 Credits:
 
-Google - SpeechRecognition
-PyQt5 - GUI
+Google - SpeechRecognition;
+PyQt5 - GUI;
