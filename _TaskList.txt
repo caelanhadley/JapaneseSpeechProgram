@@ -1,0 +1,12 @@
+1.0.0 Create Splash Image!
+    - Work on further functionality
+    - Fill in some gaps from the previous lessons be sure to include 1, 2, 3, and more greetings!
+    - Brain Storm design ideas and challenge
+    - Work on other design paramters such as graphing, and grading
+1.0.1 IMplement Hint method
+    Update main spreadsheet to include a <Hint> Field
+1.2.0 Implement Challenge method
+    Create Psudo database to store potential answers
+    Create a repository for audio file recordings of challenge problems (see 2.0)
+
+2.0.0 Implement audio recording method

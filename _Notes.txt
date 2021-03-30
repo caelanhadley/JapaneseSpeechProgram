@@ -1,0 +1,3 @@
+3/25/21 Creating a subfolder in the project to hold example code \root\example_code
+3/26/21 Implement GUI_MK2
+    + GUI_MK2.py > UI_Master
