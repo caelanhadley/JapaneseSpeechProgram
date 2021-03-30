@@ -345,7 +345,7 @@ class Ui_MainWindow(object):
 
     def removeViewerImage(self):
         try:
-            self.picture_container.setPixmap(None)
+            self.picture_container.clear()
         except:
             print("Error: removeViewerImage")
 
@@ -417,6 +417,7 @@ class Ui_MainWindow(object):
             self.setInteractionsText(
                 f'Correct! You said \"{answer}\" in {round(self.deltaTime(), 1)}')
             self.newAudioThread('buzzer.wav')
+            self.removeViewerImage()
             self.addScore(self.scoreCalculation(self.deltaTime()))
         else:
             self.setInteractionsText(
