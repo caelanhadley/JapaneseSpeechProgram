@@ -328,7 +328,7 @@ class Ui_MainWindow(object):
             try:
                 self.text_interaction.setText(str(textIn))
             except:
-                print("Error: setInteractionText() could not parse String.")
+                print("Error: setInteractionText() could not parse string.")
 
     def setHintText(self, textIn):
         self.text_hint.setText("Hint: " + textIn)
