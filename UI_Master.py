@@ -322,7 +322,13 @@ class Ui_MainWindow(object):
         self.counter_countdown.display(numIn)
 
     def setInteractionsText(self, textIn):
-        self.text_interaction.setText(textIn)
+        try:
+            self.text_interaction.setText(textIn)
+        except:
+            try:
+                self.text_interaction.setText(str(textIn))
+            except:
+                print("Error: setInteractionText() could not parse string.")
 
     def setHintText(self, textIn):
         self.text_hint.setText("Hint: " + textIn)
