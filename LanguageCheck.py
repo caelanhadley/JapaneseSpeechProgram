@@ -12,7 +12,7 @@ answer_book = load_workbook(PATH + name)
 answer_sheet = answer_book.active
 
 # DATA FORMAT:                                                           #
-# [DESCRIPTOR][TAG][CATEGORY][LESSON][Image?/Type][REUSABLE][ANSWER][ANSWER][ANSWER]... #
+# [DESCRIPTOR][TAG][CATEGORY][LESSON][Image?/Type][Hint][ANSWER][ANSWER][ANSWER]... #
 
 # Retrives all relavent answers to a question (id)
 # Excludes row 1, because row 1 is reserved for id descriptors
@@ -21,9 +21,9 @@ answer_sheet = answer_book.active
 def retriveAnswers(id):
     result = []
     # Note the '- 1' accounts for the descriptor column not being included
-    for i in (range(answer_sheet.max_column - 6)):
-        if answer_sheet.cell(row=id, column=i + 7).value != "" and answer_sheet.cell(row=id, column=i + 7).value != None:
-            result.append(answer_sheet.cell(row=id, column=i + 7).value)
+    for i in (range(answer_sheet.max_column - 7)):
+        if answer_sheet.cell(row=id, column=i + 8).value != "" and answer_sheet.cell(row=id, column=i + 8).value != None:
+            result.append(answer_sheet.cell(row=id, column=i + 8).value)
     return result
 
 
@@ -43,15 +43,25 @@ def getImage(id):
     return answer_sheet.cell(row=id, column=5).value
 
 
-def getReusable(id):
+def getHint(id):
     return answer_sheet.cell(row=id, column=6).value
 
+def getInteraction(id):
+    return answer_sheet.cell(row=id, column=7).value
 
 def hasImage(id):
     if answer_sheet.cell(row=id, column=5).value != None and answer_sheet.cell(row=id, column=5).value != '':
         return True
     else:
         return False
+
+def hasInteractions(id):
+    if answer_sheet.cell(row=id, column=7).value != None and answer_sheet.cell(row=id, column=7).value != '':
+        return True
+    else:
+        return False
+
+
 
 # Descriptor, a string representing a description
 # Returns an array of matching answer's id

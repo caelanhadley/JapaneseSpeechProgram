@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from math import log10
 from time import sleep
 import timeit
-
+from pynput.keyboard import Key, Listener
 
 import threading
 import AudioHandler as ah
@@ -391,11 +391,26 @@ class Ui_MainWindow(object):
         while self.LCDTime > 0 and self.countActive:
             self.countdownLCD()
             sleep(1)
+        if self.countActive:        # If ran out of time execute:
+            self.nextPressed()
+            self.newAudioThread("")
+
 
     # --- >>> INPUT <<< --- #
 
+    def repeatPressed(self):
+        try:
+            self.newAudioThread(str(self.identity) + ".wav")
+        except:
+            print("Error: Repeating Answer!")
+
+
     def startPressed(self):  # Redundant Code! MAY BE HANDY
         self.nextPressed()
+        self.button_start.setText("Repeat")
+        self.button_start.clicked.disconnect()
+        self.button_start.clicked.connect(self.repeatPressed)
+
 
     def nextPressed(self):
         try:
@@ -404,12 +419,16 @@ class Ui_MainWindow(object):
                 self.count_thread.join()
         except:
             print("Error: Countdown Thread")
+
         self.start_time = timeit.default_timer()
         audiofile, self.identity = lh.selectClipFromSet(
             lc.getQuestionSet(self.getActiveLessons()))
         self.newAudioThread(audiofile)
+        self.setHintText("")
+
         self.setFromLesson(str(lc.getLesson(self.identity)))
         self.setQuestionType(str(lc.getCategory(self.identity)))
+
         self.countActive = True
         self.count_thread = threading.Thread(
             target=self.countdownTimer, args=(60,))
@@ -417,9 +436,16 @@ class Ui_MainWindow(object):
 
         if lc.hasImage(self.identity):
             self.setViewerImage(lc.getImage(self.identity))
+        if lc.hasInteractions(self.identity):
+            self.setInteractionsText(lc.getInteraction(self.identity))
+        sleep(1) ## Keeps from creating too many threads.
+
 
     def hintPressed(self):
-        self.setInteractionsText("Hint!")
+        try:
+            self.setHintText(lc.getHint(self.identity))
+        except:
+            print("Error: Could not get hint!")
 
     def challengePressed(self):
         self.setInteractionsText("Challange!")
@@ -428,19 +454,25 @@ class Ui_MainWindow(object):
         self.setInteractionsText("Please speak into your microphone...")
         answer = lh.getInput(self.identity)
 
-        if self.getAnswerWithTag(answer, lc.getTag(self.identity)):
+        if self.getAnswerWithTag(answer, lc.getTag(self.identity)):     # IF ANSWER IS CORRECT 
             self.end_time = timeit.default_timer()
             self.countActive = False
             self.count_thread.join()
+
             self.setInteractionsText(
                 f'Correct! You said \"{answer}\" in {round(self.deltaTime(), 1)}')
-            self.newAudioThread('buzzer.wav')
+            self.newAudioThread('correct_short.wav')
+
             self.removeViewerImage()
+            self.setViewerImage("correct.png")
+            self.setHintText("")
+
             self.addScore(self.scoreCalculation(self.deltaTime()))
-        else:
+        else:                                                           # IF ANSWER IS INCORRECT
             self.setInteractionsText(
                 f'Incorrect! You said \"{answer}\". Please try again!')
             self.newAudioThread('buzzer_wrong.wav')
+            self.newAudioThread('error.wav')
 
     def countdownLCD(self):
         if self.counter_countdown.value() > 0:
@@ -472,6 +504,22 @@ class Ui_MainWindow(object):
 
     def deltaTime(self):
         return self.end_time - self.start_time
+
+    def on_press(self, key):   ## KEYBOARD LISTENER
+        if key == Key.space:
+            self.nextPressed()
+
+    def on_release(self, key):
+        if key == Key.esc:
+            # Stop listener
+            return False
+        
+    def listenerModule(self):
+    # Collect events until released
+        with  Listener(
+                on_press=self.on_press,
+                on_release=self.on_release) as listener:
+            listener.join()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -547,6 +595,10 @@ class Ui_MainWindow(object):
 def onExit(app, ui):
     app.exec_()
     try:
+        ui.on_release(Key.esc)
+    except:
+        print("Keyboard not released!")
+    try:
         ui.countActive = False
         ui.count_thread.join()
     except:
@@ -560,5 +612,12 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     ui.loadSplash()
+    ui.newAudioThread('startup_short.wav')
+    
+    kbl = threading.Thread(target=ui.listenerModule, args=())
+    kbl.start()
+
+
+    ui.setInteractionsText(" ")
     MainWindow.show()
     sys.exit(onExit(app, ui))
