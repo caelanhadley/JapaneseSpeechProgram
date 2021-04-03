@@ -432,6 +432,7 @@ class Ui_MainWindow(object):
             lc.getQuestionSet(self.getActiveLessons()))
         self.newAudioThread(audiofile)
         self.setHintText("")
+        self.attemptAns = 0
 
         self.setFromLesson(str(lc.getLesson(self.identity)))
         self.setQuestionType(str(lc.getCategory(self.identity)))
