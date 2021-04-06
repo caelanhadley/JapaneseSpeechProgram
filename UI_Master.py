@@ -27,9 +27,11 @@ class Ui_MainWindow(object):
         self.scores = []
         self.start_time = 0
         self.end_time = 0
+        self.lastIdent = 0
         self.identity = 0
         self.LCDTime = 0
         self.countActive = False
+        self.countStart = 999
         self.count_thread = None
         self.listener = None
         self.attemptAns = 0
@@ -375,9 +377,9 @@ class Ui_MainWindow(object):
             print("Error: removeViewerImage")
 
     def getAnswerWithTag(self, answer, tag):
-        if tag == "Conv":
+        if tag == "X":
             return lc.compareAnswers(answer, self.identity)
-        elif tag == "Pers":
+        elif tag == "V":
             return lc.compareContains(answer, self.identity)
         else:
             return None
@@ -401,13 +403,21 @@ class Ui_MainWindow(object):
         if self.countActive:        # If ran out of time execute:
             self.nextPressed()
             self.newAudioThread("")
+    
+    def checkGetAlternateAudio(self, identity):
+        result = ""
+        if lc.hasOverride(self.identity):  # checks for alternate audiofile, if found replaces with new file
+            result = lc.getAltId(self.identity)
+        else:
+            result = str(self.identity) + ".wav"
+        return result
 
 
     # --- >>> INPUT <<< --- #
 
     def repeatPressed(self):
         try:
-            self.newAudioThread(str(self.identity) + ".wav")
+            self.newAudioThread(self.checkGetAlternateAudio(self.identity))
         except:
             print("Error: Repeating Answer!")
 
@@ -420,17 +430,30 @@ class Ui_MainWindow(object):
 
 
     def nextPressed(self):
+
+        # If the current countdown clock is still running-  #
+        # -then use .join to stop the thread                #
         try:
             if self.count_thread != None:
                 self.countActive = False
                 self.count_thread.join()
         except:
-            print("Error: Countdown Thread")
+            raise Exception("Thread join() did not complete succesfully, See nextPressed() method in UI_Master.")
 
-        self.start_time = timeit.default_timer()
-        audiofile, self.identity = lh.selectClipFromSet(
-            lc.getQuestionSet(self.getActiveLessons()))
+        # Checks if the next question is a repeat of the last.  #
+        # If it's not a repeat break. If it is, try max 3 times #
+        # to generate a new identity                            #
+        for i in range(3):
+            if self.identity != self.lastIdent:
+                break
+            else:
+                self.identity = lh.selectClipFromSetIdOnly(lc.getQuestionSet(self.getActiveLessons()))
+
+        self.lastIdent = self.identity
+        audiofile = self.checkGetAlternateAudio(self.identity)
+
         self.newAudioThread(audiofile)
+        self.start_time = timeit.default_timer()
         self.setHintText("")
         self.attemptAns = 0
 
@@ -439,7 +462,7 @@ class Ui_MainWindow(object):
 
         self.countActive = True
         self.count_thread = threading.Thread(
-            target=self.countdownTimer, args=(60,))
+            target=self.countdownTimer, args=(self.countStart,))
         self.count_thread.start()
 
         if lc.hasImage(self.identity):
@@ -482,7 +505,7 @@ class Ui_MainWindow(object):
                 self.attemptAns += 1
                 self.newAudioThread('buzzer_wrong.wav')
                 self.newAudioThread('error.wav')
-                self.setInteractionsText(f'Incorrect! You said \"{answer}\". Please try again!')
+                self.setInteractionsText(f'Incorrect! You said \"{answer}\". Please try again! \nExpected: {str(lc.retriveAnswers(self.identity))}')
             elif self.attemptAns == 2:
                 self.countActive = False
                 self.attemptAns = 0
@@ -521,7 +544,7 @@ class Ui_MainWindow(object):
         return self.end_time - self.start_time
 
 
-                                                                        # Keyboard lib functions
+    # Keyboard lib functions
     def on_press(self, key):   ## KEYBOARD LISTENER
         if key == Key.space:
             if self.countActive:
