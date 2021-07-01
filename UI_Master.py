@@ -430,7 +430,7 @@ class Ui_MainWindow(object):
 
 
     def nextPressed(self):
-
+        
         # If the current countdown clock is still running-  #
         # -then use .join to stop the thread                #
         try:
@@ -438,12 +438,12 @@ class Ui_MainWindow(object):
                 self.countActive = False
                 self.count_thread.join()
         except:
-            raise Exception("Thread join() did not complete succesfully, See nextPressed() method in UI_Master.")
+            raise Exception("Thread join() did not complete succesfully, See nextPressed() method in UI_Master.py")
 
         # Checks if the next question is a repeat of the last.  #
         # If it's not a repeat break. If it is, try max 3 times #
         # to generate a new identity                            #
-        for i in range(3):
+        for i in range(1):
             if self.identity != self.lastIdent:
                 break
             else:
