@@ -4,6 +4,7 @@ import sys
 
 # Instance Variables #
 PATH = "answer_sheets\\"
+NUMBER_OF_TAGS = 9 # CONFIGURES RETRIVE ANSWERS METHOD
 name = "L4AS.xlsx"
 
 # Init #
@@ -11,7 +12,6 @@ answer_book = Workbook()
 answer_book = load_workbook(PATH + name)
 answer_sheet = answer_book.active
 
-NUMBER_OF_TAGS = 9 # CONFIGURES RETRIVE ANSWERS METHOD
 
 
 

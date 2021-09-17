@@ -284,6 +284,7 @@ class Ui_MainWindow(object):
     def loadSplash(self):
         try:
             self.setViewerImage('splash.png')
+            self.newAudioThread('BGmusic.wav') ## MAY REMOVE 
         except:
             print("Error: Loading Splash Image!")
 

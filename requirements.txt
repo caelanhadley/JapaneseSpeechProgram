@@ -1,0 +1,6 @@
+numpy==1.19.5
+SpeechRecognition==3.8.1
+pynput==1.7.3
+openpyxl==3.0.7
+PyAudio==0.2.11
+PyQt5==5.15.4
