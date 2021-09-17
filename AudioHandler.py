@@ -33,7 +33,7 @@ def play_audio(filename):
         except:
             print('Error: File ' + filename + ' was not found!')
     else:
-        print('Error: Filename not recognized!')
+        print(f'Error: File {filename} not recognized!')
 
 # is playing method
 def isPlaying():

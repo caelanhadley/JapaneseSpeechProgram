@@ -27,6 +27,10 @@ def selectClipFromSet(questionSet):
     ident = questionSet[randint(0, len(questionSet) - 1)]
     return str(ident) + ".wav", ident
 
+def selectClipFromSetIdOnly(questionSet):
+    ident = questionSet[randint(0, len(questionSet) - 1)]
+    return ident
+
 
 def selectRandomClip(IdLow, IdHigh):
     ident = randint(IdLow, IdHigh)

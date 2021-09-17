@@ -4,6 +4,7 @@ import sys
 
 # Instance Variables #
 PATH = "answer_sheets\\"
+NUMBER_OF_TAGS = 9 # CONFIGURES RETRIVE ANSWERS METHOD
 name = "L4AS.xlsx"
 
 # Init #
@@ -11,8 +12,13 @@ answer_book = Workbook()
 answer_book = load_workbook(PATH + name)
 answer_sheet = answer_book.active
 
+
+
+
+
+
 # DATA FORMAT:                                                           #
-# [DESCRIPTOR][TAG][CATEGORY][LESSON][Image?/Type][Hint][ANSWER][ANSWER][ANSWER]... #
+# [1 DESCRIPTOR][2 TAG][3 CATEGORY][4 LESSON][5 Image?/Type][6 Hint][7 Interactions Text][8 Override][9 Reference][ANSWER][ANSWER][ANSWER]... #
 
 # Retrives all relavent answers to a question (id)
 # Excludes row 1, because row 1 is reserved for id descriptors
@@ -21,12 +27,12 @@ answer_sheet = answer_book.active
 def retriveAnswers(id):
     result = []
     # Note the '- 1' accounts for the descriptor column not being included
-    for i in (range(answer_sheet.max_column - 7)):
-        if answer_sheet.cell(row=id, column=i + 8).value != "" and answer_sheet.cell(row=id, column=i + 8).value != None:
-            result.append(answer_sheet.cell(row=id, column=i + 8).value)
+    for i in (range(answer_sheet.max_column - NUMBER_OF_TAGS)):
+        if answer_sheet.cell(row=id, column=i + NUMBER_OF_TAGS + 1).value != "" and answer_sheet.cell(row=id, column=i + NUMBER_OF_TAGS + 1).value != None:
+            result.append(answer_sheet.cell(row=id, column=i + NUMBER_OF_TAGS + 1).value)
     return result
 
-
+# Determines the answer format; X - Exact; V - Variable; X > Compare Answers; V > Compare Contains Asnwer
 def getTag(id):
     return answer_sheet.cell(row=id, column=2).value
 
@@ -49,6 +55,9 @@ def getHint(id):
 def getInteraction(id):
     return answer_sheet.cell(row=id, column=7).value
 
+def getAltId(id):
+    return answer_sheet.cell(row=id, column=8).value
+
 def hasImage(id):
     if answer_sheet.cell(row=id, column=5).value != None and answer_sheet.cell(row=id, column=5).value != '':
         return True
@@ -61,7 +70,17 @@ def hasInteractions(id):
     else:
         return False
 
-
+def hasOverride(id): # Overrides the audio file to be played, useful for questions with same audio
+    if answer_sheet.cell(row=id, column=8).value != None and answer_sheet.cell(row=id, column=8).value != '':
+        return True
+    else:
+        return False
+    
+def hasReference(id):
+    if answer_sheet.cell(row=id, column=9).value != None and answer_sheet.cell(row=id, column=9).value != '':
+        return True
+    else:
+        return False
 
 # Descriptor, a string representing a description
 # Returns an array of matching answer's id
