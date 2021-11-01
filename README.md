@@ -12,7 +12,7 @@ Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 * In a command line navigate to this repo.
 * Type 'pip install -r requirements.txt' (if you do not have pip you will need to install python)
 
-+== How to Use ==+
++== How to Run ==+
 * Run 'Run.bat' in the main directory.
 * Be sure you have a microphone plugged in.
 
