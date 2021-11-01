@@ -15,7 +15,8 @@ Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 * Be sure you have a microphone plugged in.
 
 +== Dependencies ==+
-* Google Speech API for recognizing speech in.
-* PyQt for GUI.
+* Google Speech Recognition API for audio to text conversion.
+* PyQt5 for GUI.
 * pyaudio for audio handling.
 * pynput for input handling.
+* openpyx for spreadsheet/database.
