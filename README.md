@@ -17,4 +17,5 @@ Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 +== Dependencies ==+
 * Google Speech API for recognizing speech in.
 * PyQt for GUI.
-* Pyaudio for Audio Handling.
+* pyaudio for audio handling.
+* pynput for input handling.
