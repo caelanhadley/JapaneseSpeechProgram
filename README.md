@@ -11,7 +11,7 @@ Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 * Clone Repository.
 * In a command line navigate to this repo.
 * Type 'pip install -r requirements.txt' (if you do not have pip you will need to install python)
-* Finaly type 'python UI_master.py'
+* Type 'python UI_master.py'
 * Be sure you have a microphone plugged in.
 
 +== Dependencies ==+
