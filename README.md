@@ -20,5 +20,4 @@ Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 * Google Speech Recognition API for audio to text conversion.
 * PyQt5 for GUI.
 * pyaudio for audio handling.
-* pynput for input handling.
 * openpyx for spreadsheet/database.
