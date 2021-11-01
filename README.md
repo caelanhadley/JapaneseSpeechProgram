@@ -8,9 +8,6 @@ the material in "GENKI I: An Integrated Course in Elementary Japanese", by
 Eri Banno Yoko Ikeda Yutaka Ohno, Lessons 1-5.
 
 +== Dependencies ==+
-
-Google Speech API for recognizing speech in.
-
-PyQt for GUI.
-
-Pyaudio for Audio Handling.
+* Google Speech API for recognizing speech in.
+* PyQt for GUI.
+* Pyaudio for Audio Handling.
