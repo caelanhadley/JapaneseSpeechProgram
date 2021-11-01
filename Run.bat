@@ -1,0 +1,1 @@
+START "" python JapaneseSpeechProgram.py

@@ -11,8 +11,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from math import log10
 from time import sleep
 import timeit
-from pynput.keyboard import Key, Listener
-from pynput import keyboard
 
 import threading
 import AudioHandler as ah
@@ -31,7 +29,7 @@ class Ui_MainWindow(object):
         self.identity = 0
         self.LCDTime = 0
         self.countActive = False
-        self.countStart = 999
+        self.countStart = 60
         self.count_thread = None
         self.listener = None
         self.attemptAns = 0
@@ -284,7 +282,7 @@ class Ui_MainWindow(object):
     def loadSplash(self):
         try:
             self.setViewerImage('splash.png')
-            self.newAudioThread('BGmusic.wav') ## MAY REMOVE 
+            # self.newAudioThread('BGmusic.wav') ## MAY REMOVE 
         except:
             print("Error: Loading Splash Image!")
 
@@ -431,7 +429,6 @@ class Ui_MainWindow(object):
 
 
     def nextPressed(self):
-        
         # If the current countdown clock is still running-  #
         # -then use .join to stop the thread                #
         try:
@@ -439,7 +436,8 @@ class Ui_MainWindow(object):
                 self.countActive = False
                 self.count_thread.join()
         except:
-            raise Exception("Thread join() did not complete succesfully, See nextPressed() method in UI_Master.py")
+            pass
+            # raise Exception("Thread join() did not complete succesfully, See nextPressed() method in UI_Master.py")
 
         # Checks if the next question is a repeat of the last.  #
         # If it's not a repeat break. If it is, try max 3 times #
@@ -484,34 +482,35 @@ class Ui_MainWindow(object):
         
 
     def answerPressed(self):
-        self.setInteractionsText("Please speak into your microphone...")
-        answer = lh.getInput(self.identity)
+        if self.countActive:
+            self.setInteractionsText("Please speak into your microphone...")
+            answer = lh.getInput(self.identity)
 
-        if self.getAnswerWithTag(answer, lc.getTag(self.identity)):     # IF ANSWER IS CORRECT 
-            self.end_time = timeit.default_timer()
-            self.countActive = False
-            self.count_thread.join()
-
-            self.setInteractionsText(
-                f'Correct! You said \"{answer}\" in {round(self.deltaTime(), 1)}')
-            self.newAudioThread('correct_short.wav')
-
-            self.removeViewerImage()
-            self.setViewerImage("correct.png")
-            self.setHintText("")
-
-            self.addScore(self.scoreCalculation(self.deltaTime()))
-        else:                                                           # IF ANSWER IS INCORRECT
-            if (self.attemptAns < 2):
-                self.attemptAns += 1
-                self.newAudioThread('buzzer_wrong.wav')
-                self.newAudioThread('error.wav')
-                self.setInteractionsText(f'Incorrect! You said \"{answer}\". Please try again! \nExpected: {str(lc.retriveAnswers(self.identity))}')
-            elif self.attemptAns == 2:
+            if self.getAnswerWithTag(answer, lc.getTag(self.identity)):     # IF ANSWER IS CORRECT 
+                self.end_time = timeit.default_timer()
                 self.countActive = False
-                self.attemptAns = 0
-                self.newAudioThread('sorryidk.wav')
-                self.setInteractionsText(f'Sorry, I do not understand. Press Space for next Question!')
+                self.count_thread.join()
+
+                self.setInteractionsText(
+                    f'Correct! You said \"{answer}\" in {round(self.deltaTime(), 1)} seconds')
+                self.newAudioThread('correct_short.wav')
+
+                self.removeViewerImage()
+                self.setViewerImage("correct.png")
+                self.setHintText("")
+
+                self.addScore(self.scoreCalculation(self.deltaTime()))
+            else:                                                           # IF ANSWER IS INCORRECT
+                if (self.attemptAns < 2):
+                    self.attemptAns += 1
+                    self.newAudioThread('buzzer_wrong.wav')
+                    self.newAudioThread('error.wav')
+                    self.setInteractionsText(f'Incorrect! You said \"{answer}\". Please try again! \nExpected: {str(lc.retriveAnswers(self.identity))}')
+                elif self.attemptAns == 2:
+                    self.countActive = False
+                    self.attemptAns = 0
+                    self.newAudioThread('sorryidk.wav')
+                    self.setInteractionsText(f'Sorry, I do not understand. Press Space for next Question!')
 
     def countdownLCD(self):
         if self.counter_countdown.value() > 0:
@@ -544,33 +543,6 @@ class Ui_MainWindow(object):
     def deltaTime(self):
         return self.end_time - self.start_time
 
-
-    # Keyboard lib functions
-    def on_press(self, key):   ## KEYBOARD LISTENER
-        if key == Key.space:
-            if self.countActive:
-                self.answerPressed()
-            else:
-                self.setInteractionsText("")
-                self.nextPressed()
-                
-
-    def on_release(self, key):
-        if key == Key.esc:
-            return False
-        
-    def listenerModule(self):
-    # Collect events until released
-        try:
-            with  Listener(
-                    on_press=self.on_press,
-                    on_release=self.on_release) as self.listener:
-                self.listener.join()
-        except:
-            raise Exception("Runtime key listener error.")
-    
-    def releaseKeyboard(self):
-        keyboard.Listener.stop(self.listener)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -665,8 +637,6 @@ if __name__ == "__main__":
     ui.loadSplash()
     ui.newAudioThread('startup_short.wav')
     
-    kbl = threading.Thread(target=ui.listenerModule, args=())
-    kbl.start()
 
 
     ui.setInteractionsText(" ")
